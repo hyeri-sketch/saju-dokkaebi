@@ -21,7 +21,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="result"
           options={{
-            title: '사주 분석 결과',
+            title: '🐵 바나나 감정 결과',
             presentation: 'modal',
           }}
         />
