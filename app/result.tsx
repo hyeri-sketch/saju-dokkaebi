@@ -32,6 +32,7 @@ import {
   isLuckyFortune,
   hasWealthStar,
 } from '../src/constants/monkey-lines';
+import type { YearlyFortuneDetail, JiJiInteraction } from '../src/lib/yearly-fortune-engine';
 import type { BirthInput, GanJi, OHaeng } from '../src/types/saju';
 import type { Element } from '../src/types/astrology';
 
@@ -132,6 +133,249 @@ export default function ResultScreen() {
 
   const ohaengEntries = Object.entries(analysis.오행분석) as [OHaeng, number][];
   const maxOH = Math.max(...ohaengEntries.map(([, v]) => v));
+
+  // 점수 → 게이지 바 렌더
+  const renderScoreBar = (score: number, label: string) => {
+    const pct = (score / 10) * 100;
+    const color = score >= 8 ? COLORS.success : score >= 6 ? COLORS.accent : score >= 4 ? COLORS.warning : COLORS.error;
+    return (
+      <View style={styles.scoreBarContainer}>
+        <Text style={styles.scoreBarLabel}>{label}</Text>
+        <View style={styles.scoreBarTrack}>
+          <View style={[styles.scoreBarFill, { width: `${pct}%`, backgroundColor: color }]} />
+        </View>
+        <Text style={[styles.scoreBarValue, { color }]}>{score}/10</Text>
+      </View>
+    );
+  };
+
+  // 올해 운세 상세 렌더
+  const renderYearlyFortuneDetail = (yf: YearlyFortuneDetail) => {
+    const yearComments = MONKEY_SECTION_COMMENTS.yearlyDetail;
+    return (
+      <View>
+        {/* 총운 헤더 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>📅 {yearComments.title} ({yf.year})</Text>
+          <View style={styles.yearHeaderBox}>
+            <Text style={styles.yearHeaderAnimal}>{yf.yearAnimal === '말' ? '🐴' : yf.yearAnimal === '양' ? '🐑' : yf.yearAnimal === '원숭이' ? '🐵' : yf.yearAnimal === '닭' ? '🐔' : yf.yearAnimal === '개' ? '🐶' : yf.yearAnimal === '돼지' ? '🐷' : yf.yearAnimal === '쥐' ? '🐭' : yf.yearAnimal === '소' ? '🐮' : yf.yearAnimal === '호랑이' ? '🐯' : yf.yearAnimal === '토끼' ? '🐰' : yf.yearAnimal === '용' ? '🐲' : '🐍'}</Text>
+            <View style={styles.yearHeaderInfo}>
+              <Text style={styles.yearHeaderTitle}>{yf.year}년 {yf.yearGanHanja}{yf.yearJiHanja}({yf.yearGan}{yf.yearJi})년</Text>
+              <Text style={styles.yearHeaderSub}>{yf.yearAnimal}띠의 해 · {yf.yearGanOhaeng}({OHAENG_HANJA[yf.yearGanOhaeng]})+{yf.yearJiOhaeng}({OHAENG_HANJA[yf.yearJiOhaeng]}) 기운</Text>
+            </View>
+          </View>
+          <View style={styles.sipsinBadge}>
+            <Text style={styles.sipsinBadgeText}>세운 십신: {yf.sipsinRelation} ({yf.totalFortune.keyword})</Text>
+          </View>
+
+          {/* 6대 카테고리 점수 총괄 */}
+          <View style={styles.fortuneScoreGrid}>
+            {renderScoreBar(yf.totalFortune.overallScore, '총운')}
+            {renderScoreBar(yf.loveFortune.score, '애정')}
+            {renderScoreBar(yf.wealthFortune.score, '재물')}
+            {renderScoreBar(yf.careerFortune.score, '업무')}
+            {renderScoreBar(yf.healthFortune.score, '건강')}
+            {renderScoreBar(yf.relationshipFortune.score, '인간관계')}
+          </View>
+        </View>
+
+        {/* 1. 총운 (가장 상세) */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>🔮 {yearComments.total.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.totalFortune.overallScore >= 7 ? yearComments.total.good : yearComments.total.bad}</Text>
+          </View>
+          <View style={styles.fortuneScoreBig}>
+            <Text style={styles.fortuneScoreBigNum}>{yf.totalFortune.overallScore}</Text>
+            <Text style={styles.fortuneScoreBigLabel}>/ 10</Text>
+          </View>
+          <Text style={styles.bodyText}>{yf.totalFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.bodyText}>{yf.totalFortune.detail}</Text>
+          </View>
+          {/* 지지 상호작용 */}
+          {yf.jijiInteractions.length > 0 && (
+            <View style={styles.jijiSection}>
+              <Text style={styles.subTitle}>⚡ 지지(地支) 상호작용</Text>
+              {yf.jijiInteractions.map((inter, i) => (
+                <View key={i} style={[styles.jijiItem, { borderLeftColor: inter.isPositive ? COLORS.success : COLORS.error }]}>
+                  <Text style={styles.jijiType}>{inter.isPositive ? '✅' : '⚠️'} {inter.type} ({inter.yearJi}↔{inter.myJi}, {inter.position})</Text>
+                  <Text style={styles.jijiMeaning}>{inter.meaning}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          {yf.totalFortune.jijiBonus !== '' && (
+            <View style={styles.subSection}>
+              <Text style={styles.bodyText}>{yf.totalFortune.jijiBonus}</Text>
+            </View>
+          )}
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📆 상반기 전망</Text>
+            <Text style={styles.bodyText}>{yf.totalFortune.firstHalf}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📆 하반기 전망</Text>
+            <Text style={styles.bodyText}>{yf.totalFortune.secondHalf}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>💡 올해의 조언</Text>
+            <Text style={styles.adviceText}>{yf.totalFortune.advice}</Text>
+          </View>
+          <View style={styles.luckyRow}>
+            <View style={styles.luckyItem}>
+              <Text style={styles.luckyLabel}>🎨 행운 색</Text>
+              <Text style={styles.luckyValue}>{yf.totalFortune.luckyColor}</Text>
+            </View>
+            <View style={styles.luckyItem}>
+              <Text style={styles.luckyLabel}>🔢 행운 숫자</Text>
+              <Text style={styles.luckyValue}>{yf.totalFortune.luckyNumber}</Text>
+            </View>
+            <View style={styles.luckyItem}>
+              <Text style={styles.luckyLabel}>🧭 행운 방위</Text>
+              <Text style={styles.luckyValue}>{yf.totalFortune.luckyDirection}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* 2. 애정운 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>💘 {yearComments.love.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.loveFortune.score >= 7 ? yearComments.love.good : yearComments.love.bad}</Text>
+          </View>
+          {renderScoreBar(yf.loveFortune.score, '애정운')}
+          <Text style={[styles.bodyText, { marginTop: SPACING.md }]}>{yf.loveFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>💕 솔로라면</Text>
+            <Text style={styles.bodyText}>{yf.loveFortune.singleAdvice}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>👫 커플이라면</Text>
+            <Text style={styles.bodyText}>{yf.loveFortune.coupleAdvice}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>💒 결혼 신호</Text>
+            <Text style={styles.bodyText}>{yf.loveFortune.marriageSign}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>⚠ 연애 주의사항</Text>
+            <Text style={styles.adviceText}>{yf.loveFortune.caution}</Text>
+          </View>
+        </View>
+
+        {/* 3. 재물운 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>💰 {yearComments.wealth.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.wealthFortune.score >= 7 ? yearComments.wealth.good : yearComments.wealth.bad}</Text>
+          </View>
+          {renderScoreBar(yf.wealthFortune.score, '재물운')}
+          <Text style={[styles.bodyText, { marginTop: SPACING.md }]}>{yf.wealthFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📈 수입 변화</Text>
+            <Text style={styles.bodyText}>{yf.wealthFortune.incomeChange}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📊 투자 조언</Text>
+            <Text style={styles.bodyText}>{yf.wealthFortune.investmentAdvice}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🛍 지출 주의</Text>
+            <Text style={styles.bodyText}>{yf.wealthFortune.spendingWarning}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>💡 부업/사업 조언</Text>
+            <Text style={styles.adviceText}>{yf.wealthFortune.sideBusiness}</Text>
+          </View>
+        </View>
+
+        {/* 4. 업무운 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>💼 {yearComments.career.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.careerFortune.score >= 7 ? yearComments.career.good : yearComments.career.bad}</Text>
+          </View>
+          {renderScoreBar(yf.careerFortune.score, '업무운')}
+          <Text style={[styles.bodyText, { marginTop: SPACING.md }]}>{yf.careerFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📈 승진 가능성</Text>
+            <Text style={styles.bodyText}>{yf.careerFortune.promotionChance}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🔄 이직/전직</Text>
+            <Text style={styles.bodyText}>{yf.careerFortune.jobChangeAdvice}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🏢 사업/비즈니스</Text>
+            <Text style={styles.bodyText}>{yf.careerFortune.businessAdvice}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>📅 핵심 시기</Text>
+            <Text style={styles.adviceText}>{yf.careerFortune.keyPeriod}</Text>
+          </View>
+        </View>
+
+        {/* 5. 건강운 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>🏥 {yearComments.health.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.healthFortune.score >= 7 ? yearComments.health.good : yearComments.health.bad}</Text>
+          </View>
+          {renderScoreBar(yf.healthFortune.score, '건강운')}
+          <Text style={[styles.bodyText, { marginTop: SPACING.md }]}>{yf.healthFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>⚠ 취약 부위</Text>
+            <Text style={styles.bodyText}>{yf.healthFortune.weakPoints}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🌿 계절별 건강관리</Text>
+            <Text style={styles.bodyText}>{yf.healthFortune.seasonalAdvice}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🧠 정신 건강</Text>
+            <Text style={styles.bodyText}>{yf.healthFortune.mentalHealth}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>🏃 추천 운동</Text>
+            <Text style={styles.adviceText}>{yf.healthFortune.exerciseAdvice}</Text>
+          </View>
+        </View>
+
+        {/* 6. 대인관계운 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>🤝 {yearComments.relationship.title}</Text>
+          <View style={styles.monkeyMini}>
+            <Text style={styles.monkeyMiniEmoji}>🐵</Text>
+            <Text style={styles.monkeyMiniText}>{yf.relationshipFortune.score >= 7 ? yearComments.relationship.good : yearComments.relationship.bad}</Text>
+          </View>
+          {renderScoreBar(yf.relationshipFortune.score, '대인관계')}
+          <Text style={[styles.bodyText, { marginTop: SPACING.md }]}>{yf.relationshipFortune.summary}</Text>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>👨‍👩‍👧‍👦 가족 관계</Text>
+            <Text style={styles.bodyText}>{yf.relationshipFortune.familyRelation}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>👥 친구 관계</Text>
+            <Text style={styles.bodyText}>{yf.relationshipFortune.friendRelation}</Text>
+          </View>
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>🏢 직장 관계</Text>
+            <Text style={styles.bodyText}>{yf.relationshipFortune.workRelation}</Text>
+          </View>
+          <View style={styles.adviceBox}>
+            <Text style={styles.adviceTitle}>⭐ 올해의 귀인</Text>
+            <Text style={styles.adviceText}>{yf.relationshipFortune.noblePerson}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -347,24 +591,9 @@ export default function ResultScreen() {
             </View>
           )}
         </View>
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>🍌 {detailed.yearlyFortune.currentYear}년 총운 바나나 시세</Text>
-          <View style={styles.yearPriceRow}>
-            <View style={styles.yearPriceLeft}>
-              <Text style={styles.yearPriceEmoji}>{detailed.yearlyFortune.gradeEmoji}</Text>
-              <View>
-                <Text style={styles.yearPriceGrade}>{detailed.yearlyFortune.grade}</Text>
-                <Text style={styles.yearPriceValue}>{detailed.yearlyFortune.priceLabel}</Text>
-              </View>
-            </View>
-            <View style={styles.yearBadge}>
-              <Text style={styles.yearBadgeText}>
-                {detailed.yearlyFortune.yearGan}{detailed.yearlyFortune.yearJi}년 ({detailed.yearlyFortune.yearOHaeng} 기운)
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.bodyText}>{detailed.yearlyFortune.summary}</Text>
-        </View>
+        {/* ========== 올해 운세 (상세) ========== */}
+        {renderYearlyFortuneDetail(detailed.yearlyFortuneDetail)}
+        {/* ========== 대운 흐름 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🗺 {MONKEY_SECTION_COMMENTS.daeun.title}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -682,6 +911,60 @@ const styles = StyleSheet.create({
   starBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: BORDER_RADIUS.sm },
   starText: { fontSize: 11, fontWeight: '700', color: '#FFF' },
   noStar: { fontSize: 13, color: COLORS.textMuted },
+  // 올해 운세 상세
+  yearHeaderBox: {
+    flexDirection: 'row', alignItems: 'center', gap: SPACING.md,
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md, marginBottom: SPACING.md,
+  },
+  yearHeaderAnimal: { fontSize: 48 },
+  yearHeaderInfo: { flex: 1 },
+  yearHeaderTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text },
+  yearHeaderSub: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4 },
+  sipsinBadge: {
+    backgroundColor: COLORS.primary + '30', borderRadius: BORDER_RADIUS.md,
+    paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, marginBottom: SPACING.lg,
+    alignSelf: 'flex-start',
+  },
+  sipsinBadgeText: { fontSize: 14, color: COLORS.primaryLight, fontWeight: '600' },
+  fortuneScoreGrid: { gap: SPACING.sm },
+  scoreBarContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  scoreBarLabel: { width: 56, fontSize: 13, fontWeight: '600', color: COLORS.textSecondary },
+  scoreBarTrack: {
+    flex: 1, height: 14, backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.sm, overflow: 'hidden', marginHorizontal: SPACING.sm,
+  },
+  scoreBarFill: { height: '100%', borderRadius: BORDER_RADIUS.sm },
+  scoreBarValue: { width: 36, fontSize: 13, fontWeight: '700', textAlign: 'right' },
+  monkeyMini: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm,
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.sm, marginBottom: SPACING.md,
+  },
+  monkeyMiniEmoji: { fontSize: 24 },
+  monkeyMiniText: { flex: 1, fontSize: 13, color: COLORS.accent, fontWeight: '600', lineHeight: 20 },
+  fortuneScoreBig: {
+    flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center',
+    marginBottom: SPACING.md,
+  },
+  fortuneScoreBigNum: { fontSize: 48, fontWeight: '900', color: COLORS.accent },
+  fortuneScoreBigLabel: { fontSize: 20, fontWeight: '600', color: COLORS.textMuted, marginLeft: 4 },
+  jijiSection: { marginTop: SPACING.lg },
+  jijiItem: {
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.sm, marginBottom: SPACING.sm,
+    borderLeftWidth: 3,
+  },
+  jijiType: { fontSize: 13, fontWeight: '700', color: COLORS.text, marginBottom: 4 },
+  jijiMeaning: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 20 },
+  luckyRow: {
+    flexDirection: 'row', justifyContent: 'space-around', marginTop: SPACING.lg,
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md,
+  },
+  luckyItem: { alignItems: 'center' },
+  luckyLabel: { fontSize: 11, color: COLORS.textMuted, marginBottom: 4 },
+  luckyValue: { fontSize: 13, fontWeight: '600', color: COLORS.text, textAlign: 'center' },
   // 하단
   backBtn: { paddingVertical: 16, alignItems: 'center' },
   backBtnText: { color: COLORS.primaryLight, fontSize: 16, fontWeight: '600' },

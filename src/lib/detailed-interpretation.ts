@@ -12,6 +12,7 @@ import {
   DAEUN_OHAENG_INTERPRETATION,
 } from '../constants/interpretation-data';
 import { CHEON_GAN_OHAENG } from '../constants/saju-data';
+import { calculateYearlyFortuneDetail, type YearlyFortuneDetail } from './yearly-fortune-engine';
 
 export interface DetailedResult {
   personality: {
@@ -77,6 +78,7 @@ export interface DetailedResult {
     gradeEmoji: string;
     priceLabel: string;
   };
+  yearlyFortuneDetail: YearlyFortuneDetail;
 }
 
 /**
@@ -123,6 +125,9 @@ export function getDetailedInterpretation(analysis: FullAnalysis): DetailedResul
   // 9. 올해 운세 (간략)
   const yearlyFortune = calculateYearlyFortune(analysis, dayGan);
 
+  // 10. 올해 운세 (상세 6대 카테고리)
+  const yearlyFortuneDetail = calculateYearlyFortuneDetail(analysis);
+
   return {
     personality,
     wealth,
@@ -133,6 +138,7 @@ export function getDetailedInterpretation(analysis: FullAnalysis): DetailedResul
     sipsinSummary,
     daeunInterpretations,
     yearlyFortune,
+    yearlyFortuneDetail,
   };
 }
 
