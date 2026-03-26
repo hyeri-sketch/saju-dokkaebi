@@ -80,8 +80,8 @@ export default function HomeScreen() {
         {/* 헤더 - 야끼 원숭이 */}
         <View style={styles.header}>
           <Text style={styles.logo}>🐵</Text>
-          <Text style={styles.title}>사주야끼</Text>
-          <Text style={styles.subtitle}>도파민 원숭이의 사주 바나나 감정소</Text>
+          <Text style={styles.title}>포춘야끼</Text>
+          <Text style={styles.subtitle}>도파민 원숭이의 팩폭 펀치</Text>
           <View style={styles.statusBubble}>
             <Text style={styles.statusText}>{statusMsg}</Text>
           </View>
@@ -89,7 +89,7 @@ export default function HomeScreen() {
 
         {/* 입력 폼 */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>🍌 바나나(사주) 투척하기</Text>
+          <Text style={styles.cardTitle}>🍌 바나나 투척하기</Text>
 
           {/* 성별 선택 */}
           <Text style={styles.label}>성별</Text>
