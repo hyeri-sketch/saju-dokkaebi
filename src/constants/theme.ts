@@ -9,21 +9,21 @@ export const COLORS = {
   accent: '#FFD700',       // 금색
 
   // 배경
-  background: '#0D0B1A',   // 짙은 남색
-  surface: '#1A1630',      // 카드 배경
-  surfaceLight: '#252040',
+  background: '#F5F3EE',   // 오프 화이트
+  surface: '#FFFFFF',      // 카드 배경
+  surfaceLight: '#EDE9E3',
 
   // 텍스트
-  text: '#FFFFFF',
-  textSecondary: '#A8A3C0',
-  textMuted: '#6B6589',
+  text: '#1A1A1A',
+  textSecondary: '#4A4A4A',
+  textMuted: '#8A8A8A',
 
   // 오행 색상
   목: '#4CAF50',
   화: '#F44336',
   토: '#FFC107',
   금: '#E0E0E0',
-  수: '#2196F3',
+  수: '#1A1A2E',
 
   // 상태
   success: '#4CAF50',
@@ -32,8 +32,8 @@ export const COLORS = {
   info: '#2196F3',
 
   // 기타
-  border: '#2D2755',
-  divider: '#1F1B35',
+  border: '#D9D4CC',
+  divider: '#E8E3DB',
 };
 
 export const FONTS = {

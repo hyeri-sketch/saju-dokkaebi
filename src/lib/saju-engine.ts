@@ -24,8 +24,8 @@ import {
   JI_JI_JANGGAN,
   WOLJU_START_GAN,
   SIJU_START_GAN,
-  JEOLGI_MONTHS,
 } from '../constants/saju-data';
+import { getAccurateJeolgiMonth, getAccurateJeolgiYear } from '../constants/jeolgi-data';
 
 /**
  * 음력 → 양력 변환
@@ -54,28 +54,17 @@ function solarToLunar(year: number, month: number, day: number): { year: number;
 }
 
 /**
- * 절기 기반 월 계산 (명리학에서는 절기 기준으로 월을 나눔)
+ * 절기 기반 월 계산 - 연도별 정확한 절기 데이터 사용
  */
-function getJeolgiMonth(solarMonth: number, solarDay: number): number {
-  // 절기 기반 월: 입춘부터 1월(인월)
-  for (let i = JEOLGI_MONTHS.length - 1; i >= 0; i--) {
-    const jeolgi = JEOLGI_MONTHS[i];
-    if (solarMonth > jeolgi.startMonth || (solarMonth === jeolgi.startMonth && solarDay >= jeolgi.startDay)) {
-      return jeolgi.month;
-    }
-  }
-  return 12; // 소한 이전이면 전년도 12월
+function getJeolgiMonth(solarYear: number, solarMonth: number, solarDay: number): number {
+  return getAccurateJeolgiMonth(solarYear, solarMonth, solarDay);
 }
 
 /**
- * 절기 기반으로 년도 보정 (입춘 전이면 전년도)
+ * 절기 기반으로 년도 보정 - 연도별 정확한 입춘 날짜 사용
  */
 function getJeolgiYear(solarYear: number, solarMonth: number, solarDay: number): number {
-  // 입춘(2월 4일경) 이전이면 전년도
-  if (solarMonth < 2 || (solarMonth === 2 && solarDay < 4)) {
-    return solarYear - 1;
-  }
-  return solarYear;
+  return getAccurateJeolgiYear(solarYear, solarMonth, solarDay);
 }
 
 /**
@@ -118,7 +107,9 @@ function calculateIlju(solarYear: number, solarMonth: number, solarDay: number):
   // 갑진 = 60갑자 중 인덱스 40 (갑=0, 진=4 → 0*12+4는 아니고 60갑자 순서상 40번째)
   // 실제로: 2000-01-07이 갑자일
   // 2000-01-07 JDN = 2451551
-  const baseJdn = 2451551; // 2000년 1월 7일 = 갑자일
+  // 검증된 기준일: 1949년 1월 21일 = 갑자일 (만세력 표준)
+  // JDN(1949-01-21) = 2432933
+  const baseJdn = 2432933;
   const diff = ((jdn - baseJdn) % 60 + 60) % 60;
 
   return {
@@ -319,9 +310,9 @@ export function calculateSaju(input: BirthInput): FullAnalysis {
     solarDay = solar.day;
   }
 
-  // 절기 기반 년도 보정
+  // 절기 기반 년도 보정 (연도별 정확한 절기 데이터 사용)
   const jeolgiYear = getJeolgiYear(solarYear, solarMonth, solarDay);
-  const jeolgiMonth = getJeolgiMonth(solarMonth, solarDay);
+  const jeolgiMonth = getJeolgiMonth(solarYear, solarMonth, solarDay);
 
   // 사주 계산
   const nyeonju = calculateNyeonju(jeolgiYear);

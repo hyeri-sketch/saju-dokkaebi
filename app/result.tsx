@@ -111,17 +111,17 @@ export default function ResultScreen() {
       <View style={styles.pillar}>
         <Text style={styles.pillarLabel}>{label}</Text>
         {subLabel && <Text style={styles.pillarSubLabel}>{subLabel}</Text>}
-        <View style={[styles.ganjiBox, { borderColor: OHAENG_COLORS[ganOH] }]}>
+        <View style={[styles.ganjiBox, { backgroundColor: OHAENG_COLORS[ganOH] + 'CC' }]}>
           <Text style={styles.ganjiHanja}>{CHEON_GAN_HANJA[ganji.천간]}</Text>
           <Text style={styles.ganjiKor}>{ganji.천간}</Text>
-          <View style={[styles.ohaengBadge, { backgroundColor: OHAENG_COLORS[ganOH] }]}>
+          <View style={[styles.ohaengBadge, { backgroundColor: 'rgba(0,0,0,0.25)' }]}>
             <Text style={styles.ohaengBadgeText}>{OHAENG_HANJA[ganOH]}</Text>
           </View>
         </View>
-        <View style={[styles.ganjiBox, { borderColor: OHAENG_COLORS[jiOH] }]}>
+        <View style={[styles.ganjiBox, { backgroundColor: OHAENG_COLORS[jiOH] + 'CC' }]}>
           <Text style={styles.ganjiHanja}>{JI_JI_HANJA[ganji.지지]}</Text>
           <Text style={styles.ganjiKor}>{ganji.지지}</Text>
-          <View style={[styles.ohaengBadge, { backgroundColor: OHAENG_COLORS[jiOH] }]}>
+          <View style={[styles.ohaengBadge, { backgroundColor: 'rgba(0,0,0,0.25)' }]}>
             <Text style={styles.ohaengBadgeText}>{OHAENG_HANJA[jiOH]}</Text>
           </View>
         </View>
@@ -135,7 +135,7 @@ export default function ResultScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>{/* 도파민 파티 */}
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {showParty && (
           <Animated.View style={[styles.partyOverlay, { opacity: partyAnim }]}>
             <Text style={styles.partyEmoji}>🎉🐵🎆🍌🎊🐵🎉</Text>
@@ -143,14 +143,12 @@ export default function ResultScreen() {
             <Text style={styles.partyEmoji}>🎆🍌🎉🐵🎊🍌🎆</Text>
           </Animated.View>
         )}
-        {/* 원숭이 오프닝 */}
         <View style={styles.monkeyBubble}>
           <Text style={styles.monkeyFace}>🐵</Text>
           <View style={styles.monkeySpeech}>
             <Text style={styles.monkeySpeechText}>{opening}</Text>
           </View>
         </View>
-        {/* ========== 사주 팔자 표 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🏛 사주{isUnknownTime ? '삼주 (三柱六字)' : '팔자 (四柱八字)'}</Text>
           {isUnknownTime && (
@@ -181,7 +179,26 @@ export default function ResultScreen() {
             ★ 일간(日干): {analysis.saju.일주.천간} ({analysis.일간음양} {analysis.일간오행}) - 나를 나타내는 글자
           </Text>
         </View>
-        {/* ========== 성격 분석 ========== */}
+        <View style={styles.totalFortuneCard}>
+          <Text style={styles.totalFortuneTitle}>🍌 전체 총운</Text>
+          <Text style={styles.totalFortuneGan}>{detailed.personality.summary}</Text>
+          <View style={styles.totalFortuneStats}>
+            <View style={styles.totalFortuneStat}>
+              <Text style={styles.totalFortuneStatLabel}>재물</Text>
+              <Text style={styles.totalFortuneStatValue}>{isWealthy ? '★★★' : '★★'}</Text>
+            </View>
+            <View style={styles.totalFortuneStat}>
+              <Text style={styles.totalFortuneStatLabel}>오행</Text>
+              <Text style={styles.totalFortuneStatValue}>{isLucky ? '균형' : '편중'}</Text>
+            </View>
+            <View style={styles.totalFortuneStat}>
+              <Text style={styles.totalFortuneStatLabel}>별자리</Text>
+              <Text style={styles.totalFortuneStatValue}>{astrologyResult.sunSign.sign}</Text>
+            </View>
+          </View>
+          <Text style={styles.subTitle}>{'📅 올해 총운'}</Text>
+          <Text style={styles.totalFortuneBody}>{detailed.yearlyFortune.summary}</Text>
+        </View>
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🐵 {MONKEY_SECTION_COMMENTS.personality.title}</Text>
           <View style={styles.summaryBadge}>
@@ -201,7 +218,6 @@ export default function ResultScreen() {
             <Text style={styles.adviceText}>{detailed.personality.advice}</Text>
           </View>
         </View>
-        {/* ========== 재물운 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🍌 {MONKEY_SECTION_COMMENTS.wealth.title}</Text>
           <Text style={styles.bodyText}>{detailed.wealth.overall}</Text>
@@ -218,7 +234,6 @@ export default function ResultScreen() {
             <Text style={styles.adviceText}>{detailed.wealth.investmentAdvice}</Text>
           </View>
         </View>
-        {/* ========== 직업운 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🐵 {MONKEY_SECTION_COMMENTS.career.title}</Text>
           <Text style={styles.bodyText}>{detailed.career.overall}</Text>
@@ -241,7 +256,6 @@ export default function ResultScreen() {
             <Text style={styles.adviceText}>{detailed.career.careerAdvice}</Text>
           </View>
         </View>
-        {/* ========== 연애/결혼운 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>💘 {MONKEY_SECTION_COMMENTS.love.title}</Text>
           <View style={styles.subSection}>
@@ -261,7 +275,6 @@ export default function ResultScreen() {
             <Text style={styles.adviceText}>{detailed.love.cautionInLove}</Text>
           </View>
         </View>
-        {/* ========== 건강운 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>💊 {MONKEY_SECTION_COMMENTS.health.title}</Text>
           <View style={styles.subSection}>
@@ -281,7 +294,6 @@ export default function ResultScreen() {
             <Text style={styles.adviceText}>{detailed.health.stressRelief}</Text>
           </View>
         </View>
-        {/* ========== 오행 분석 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🍌 {MONKEY_SECTION_COMMENTS.ohaeng.title}</Text>
           {ohaengEntries.map(([label, value]) => (
@@ -314,7 +326,6 @@ export default function ResultScreen() {
             </View>
           )}
         </View>
-        {/* ========== 십신 분석 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🔬 {MONKEY_SECTION_COMMENTS.sipsin.title}</Text>
           <View style={styles.sipsinGrid}>
@@ -336,7 +347,6 @@ export default function ResultScreen() {
             </View>
           )}
         </View>
-        {/* ========== 올해 운세 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>📅 {MONKEY_SECTION_COMMENTS.yearly.title} ({detailed.yearlyFortune.currentYear})</Text>
           <View style={styles.yearBadge}>
@@ -346,7 +356,6 @@ export default function ResultScreen() {
           </View>
           <Text style={styles.bodyText}>{detailed.yearlyFortune.summary}</Text>
         </View>
-        {/* ========== 대운 흐름 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🗺 {MONKEY_SECTION_COMMENTS.daeun.title}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -375,7 +384,6 @@ export default function ResultScreen() {
             </View>
           ))}
         </View>
-        {/* ========== 서양 점성술 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>⭐ {MONKEY_SECTION_COMMENTS.astrology.title}</Text>
           <View style={styles.zodiacHeader}>
@@ -407,7 +415,6 @@ export default function ResultScreen() {
             ))}
           </View>
         </View>
-        {/* ========== 자미두수 ========== */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>🌟 {MONKEY_SECTION_COMMENTS.ziwei.title}</Text>
           <View style={styles.ziweiHeader}>
@@ -440,7 +447,6 @@ export default function ResultScreen() {
             </View>
           ))}
         </View>
-        {/* 돌아가기 */}
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
           <Text style={styles.backBtnText}>🐵 다른 바나나 까러 가기</Text>
         </TouchableOpacity>
@@ -481,6 +487,33 @@ const styles = StyleSheet.create({
   monkeySpeechText: {
     fontSize: 14, color: COLORS.accent, lineHeight: 22, fontWeight: '600',
   },
+  totalFortuneCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+    borderWidth: 2,
+    borderColor: COLORS.accent,
+  },
+  totalFortuneTitle: {
+    fontSize: 20, fontWeight: '900', color: COLORS.accent, textAlign: 'center', marginBottom: SPACING.sm,
+  },
+  totalFortuneGan: {
+    fontSize: 28, fontWeight: '900', color: COLORS.text, textAlign: 'center', marginBottom: 4,
+  },
+  totalFortuneSummary: {
+    fontSize: 14, color: COLORS.primaryLight, textAlign: 'center', marginBottom: SPACING.md, fontWeight: '600',
+  },
+  totalFortuneStats: {
+    flexDirection: 'row', justifyContent: 'space-around', marginBottom: SPACING.md,
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md, padding: SPACING.sm,
+  },
+  totalFortuneStat: { alignItems: 'center' },
+  totalFortuneStatLabel: { fontSize: 11, color: COLORS.textMuted, marginBottom: 2 },
+  totalFortuneStatValue: { fontSize: 14, fontWeight: '700', color: COLORS.text },
+  totalFortuneBody: {
+    fontSize: 14, color: COLORS.textSecondary, lineHeight: 22, textAlign: 'center',
+  },
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.lg,
@@ -498,14 +531,14 @@ const styles = StyleSheet.create({
   pillarLabel: { fontSize: 14, fontWeight: '700', color: COLORS.text, marginBottom: 2 },
   pillarSubLabel: { fontSize: 10, color: COLORS.textMuted, marginBottom: SPACING.sm },
   ganjiBox: {
-    width: '100%', aspectRatio: 0.75, borderRadius: BORDER_RADIUS.md,
-    borderWidth: 2, backgroundColor: COLORS.surfaceLight,
+    width: '100%', aspectRatio: 1.1, borderRadius: BORDER_RADIUS.md,
+    borderWidth: 0,
     alignItems: 'center', justifyContent: 'center', marginBottom: 4,
   },
-  ganjiHanja: { fontSize: 24, fontWeight: '900', color: COLORS.text },
-  ganjiKor: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-  ohaengBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: BORDER_RADIUS.sm, marginTop: 4 },
-  ohaengBadgeText: { fontSize: 10, fontWeight: '700', color: '#000' },
+  ganjiHanja: { fontSize: 22, fontWeight: '900', color: '#FFF' },
+  ganjiKor: { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 1 },
+  ohaengBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: BORDER_RADIUS.sm, marginTop: 3 },
+  ohaengBadgeText: { fontSize: 9, fontWeight: '700', color: 'rgba(255,255,255,0.9)' },
   animalText: { fontSize: 11, color: COLORS.textMuted, marginTop: 2 },
   unknownTimeBanner: {
     backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md,

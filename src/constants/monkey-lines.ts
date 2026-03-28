@@ -60,7 +60,7 @@ export const MONKEY_OPENING: Record<string, string> = {
 // ============================================================
 export const MONKEY_SECTION_COMMENTS = {
   personality: {
-    title: '바나나 속 정체 파악 완료!',
+    title: '성격운',
     good: [
       '오 이 바나나 속이 꽉 찼네! 쓸만하다 우끼!',
       '나쁘지 않은 바나나네... 인정! 반만.',
@@ -73,7 +73,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   wealth: {
-    title: '바나나(돈) 복 감정 결과!',
+    title: '재물운',
     rich: [
       '우끼끼! 돈 바나나가 주렁주렁! 나한테도 좀 줘!',
       '재물운 대박! 근데 왜 아직 안 부자야? 의문이네~',
@@ -86,7 +86,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   career: {
-    title: '직업 바나나 분석!',
+    title: '직업운',
     comments: [
       '이 바나나로 뭘 할 수 있을까~ 내가 알려줄게 우끼!',
       '직업운 까봤다! 결론: 일은 해야 함. (당연한 소리)',
@@ -94,7 +94,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   love: {
-    title: '연애 바나나 감정서!',
+    title: '연애운',
     good: [
       '오~ 이 바나나 달콤하네! 연애운 괜찮잖아! 우끼끼!',
       '솔로라고? 바나나가 곧 두 개가 될 징조! (아마도)',
@@ -107,7 +107,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   health: {
-    title: '건강 바나나 진단서!',
+    title: '건강운',
     comments: [
       '바나나 상태 체크! 좀 물렁한 데가 있네?',
       '우끼! 건강은 바나나처럼 관리해야 해! 방치하면 썩음!',
@@ -115,12 +115,12 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   ohaeng: {
-    title: '오행 바나나 밸런스!',
+    title: '오행운',
     balanced: '오~ 바나나 영양 균형 좋다! 골고루 먹었네 우끼!',
     unbalanced: '바나나만 먹으면 안 되지! 다른 과일도 좀 먹어! (오행 보충하란 뜻)',
   },
   sipsin: {
-    title: '십신 바나나 X-ray!',
+    title: '십신운',
     comments: [
       '바나나 속을 들여다봤다... 흥미롭군 우끼끼!',
       '이 바나나의 DNA를 분석해봤어!',
@@ -128,7 +128,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   yearly: {
-    title: '올해 바나나 시세!',
+    title: '올해 총운 바나나 시세!',
     good: [
       '올해 바나나 시세 폭등! 좋은 해가 될 거야 우끼!',
       '올해는 바나나가 풍년! 마음껏 즐겨!',
@@ -139,21 +139,21 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   daeun: {
-    title: '인생 바나나 로드맵!',
+    title: '대운',
     comments: [
       '너의 인생 바나나를 연대순으로 까봤어 우끼!',
       '대운이란 건... 큰 바나나 나무가 바뀌는 거야!',
     ],
   },
   astrology: {
-    title: '서양 바나나 감정!',
+    title: '별자리운',
     comments: [
       '서양 원숭이가 별을 보고 분석한 결과! 우끼!',
       '별자리로도 까봤다! 동서양 더블 바나나!',
     ],
   },
   ziwei: {
-    title: '자미두수 바나나 명반!',
+    title: '자미두수운',
     comments: [
       '고대 원숭이의 비법으로 분석! 자미두수!',
       '이 바나나는 별자리 배치가 좀 특이한데? 우끼~',

@@ -85,7 +85,7 @@ export const OHAENG_COLORS: Record<OHaeng, string> = {
   '화': '#F44336',  // 적색
   '토': '#FFC107',  // 황색
   '금': '#FFFFFF',  // 백색
-  '수': '#2196F3',  // 흑색/남색
+  '수': '#1A1A2E',  // 흑색
 };
 
 // 오행 한자
