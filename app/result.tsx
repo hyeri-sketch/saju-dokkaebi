@@ -348,11 +348,20 @@ export default function ResultScreen() {
           )}
         </View>
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>📅 {MONKEY_SECTION_COMMENTS.yearly.title} ({detailed.yearlyFortune.currentYear})</Text>
-          <View style={styles.yearBadge}>
-            <Text style={styles.yearBadgeText}>
-              {detailed.yearlyFortune.yearGan}{detailed.yearlyFortune.yearJi}년 ({detailed.yearlyFortune.yearOHaeng} 기운)
-            </Text>
+          <Text style={styles.sectionTitle}>🍌 {detailed.yearlyFortune.currentYear}년 총운 바나나 시세</Text>
+          <View style={styles.yearPriceRow}>
+            <View style={styles.yearPriceLeft}>
+              <Text style={styles.yearPriceEmoji}>{detailed.yearlyFortune.gradeEmoji}</Text>
+              <View>
+                <Text style={styles.yearPriceGrade}>{detailed.yearlyFortune.grade}</Text>
+                <Text style={styles.yearPriceValue}>{detailed.yearlyFortune.priceLabel}</Text>
+              </View>
+            </View>
+            <View style={styles.yearBadge}>
+              <Text style={styles.yearBadgeText}>
+                {detailed.yearlyFortune.yearGan}{detailed.yearlyFortune.yearJi}년 ({detailed.yearlyFortune.yearOHaeng} 기운)
+              </Text>
+            </View>
           </View>
           <Text style={styles.bodyText}>{detailed.yearlyFortune.summary}</Text>
         </View>
@@ -604,12 +613,25 @@ const styles = StyleSheet.create({
   sipsinName: { fontSize: 15, fontWeight: '700', color: COLORS.primaryLight },
   sipsinKeyword: { fontSize: 11, color: COLORS.textSecondary, marginTop: 2 },
   // 올해 운세
+  yearPriceRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  yearPriceLeft: {
+    flexDirection: 'row', alignItems: 'center', gap: SPACING.sm,
+  },
+  yearPriceEmoji: { fontSize: 28 },
+  yearPriceGrade: {
+    fontSize: 18, fontWeight: '900', color: COLORS.accent,
+  },
+  yearPriceValue: {
+    fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 1,
+  },
   yearBadge: {
     backgroundColor: COLORS.secondary + '20', borderRadius: BORDER_RADIUS.md,
-    paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, marginBottom: SPACING.md,
-    alignSelf: 'flex-start',
+    paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm,
   },
-  yearBadgeText: { fontSize: 14, color: COLORS.secondary, fontWeight: '600' },
+  yearBadgeText: { fontSize: 12, color: COLORS.secondary, fontWeight: '600' },
   // 대운
   daeunRow: { flexDirection: 'row', gap: SPACING.sm, paddingVertical: SPACING.xs },
   daeunItem: { alignItems: 'center', width: 55 },

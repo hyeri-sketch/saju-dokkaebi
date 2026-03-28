@@ -73,6 +73,9 @@ export interface DetailedResult {
     yearJi: string;
     yearOHaeng: OHaeng;
     summary: string;
+    grade: '폭등' | '상승' | '보합' | '하락' | '폭락';
+    gradeEmoji: string;
+    priceLabel: string;
   };
 }
 
@@ -228,18 +231,36 @@ function calculateYearlyFortune(analysis: FullAnalysis, dayGan: CheonGan): Detai
   const dayOHaeng = CHEON_GAN_OHAENG[dayGan];
 
   let summary = '';
+  let grade: DetailedResult['yearlyFortune']['grade'] = '보합';
+  let gradeEmoji = '';
+  let priceLabel = '';
 
   // 올해 천간의 오행과 일간의 관계로 운세 판단
   if (yearOHaeng === dayOHaeng) {
-    summary = `올해는 비견/겁재의 해입니다. 자립과 경쟁의 시기로, 동료나 형제와의 관계가 중요합니다. 독립적인 활동에서 좋은 성과를 거둘 수 있으나, 재물 관리에 신중해야 합니다. 새로운 도전을 시작하기 좋은 해입니다.`;
+    grade = '보합';
+    gradeEmoji = '🍌';
+    priceLabel = '1,200원/kg';
+    summary = `올해는 비견/겁재의 해야. 나랑 같은 기운이 들어오니까 경쟁자가 늘어나는 시기거든. 직장에서 라이벌이 등장하거나, 같은 포지션을 노리는 사람이 생길 수 있어. 근데 이게 꼭 나쁜 건 아니야. 경쟁이 있어야 성장하니까. 독립적으로 뭔가 시작하기엔 좋은 해고, "내 힘으로 해보겠다"는 마인드가 강해지는 시기야. 다만 돈이 나갈 일이 많아져. 형제나 친구 관계에서 돈이 오가는 상황이 생길 수 있으니까 보증은 절대 서지 마.`;
   } else if (getGenerated(dayOHaeng) === yearOHaeng) {
-    summary = `올해는 식신/상관의 해입니다. 표현력과 창의성이 극대화되는 시기입니다. 새로운 아이디어가 빛을 발하며, 예술적 활동이나 자기 표현에 좋은 해입니다. 식복도 따르며 먹는 즐거움이 커집니다.`;
+    grade = '상승';
+    gradeEmoji = '🍌🍌';
+    priceLabel = '2,500원/kg';
+    summary = `올해는 식신/상관의 해야. 표현력과 창의성이 터지는 시기거든. 그동안 머릿속에만 있던 아이디어가 밖으로 나오고, "와 이거 좋은데?" 하는 반응을 받게 돼. 유튜브 시작하거나, 블로그 쓰거나, 작품 활동 하기에 딱 좋은 해야. 먹는 복도 따라오니까 맛있는 거 많이 먹게 될 거고, 체중 관리에 주의해야 해. 자기 표현을 적극적으로 하면 인정받는 해지만, 입이 가벼워지면 구설수에 주의해야 해.`;
   } else if (getControlled(dayOHaeng) === yearOHaeng) {
-    summary = `올해는 재성의 해입니다. 재물운이 활발해지는 시기입니다. 사업이나 투자에서 기회가 올 수 있으며, 적극적인 재테크 활동이 좋은 결과를 가져옵니다. 연애운도 좋아 좋은 만남이 있을 수 있습니다.`;
+    grade = '폭등';
+    gradeEmoji = '🍌🍌🍌';
+    priceLabel = '5,000원/kg';
+    summary = `올해는 재성의 해야. 돈이 들어오는 시기가 왔어! 사업이든 투자든 적극적으로 움직이면 좋은 결과가 나와. 월급 인상, 보너스, 사이드 수입 등 재물운이 활발해지는 해거든. 연애운도 같이 올라가니까 솔로면 좋은 만남이 있을 수 있고, 커플이면 관계가 더 진전돼. 다만 욕심이 과하면 오히려 날릴 수 있으니까 "적당히 벌고 적당히 쓰는" 균형을 잊지 마.`;
   } else if (getControlling(dayOHaeng) === yearOHaeng) {
-    summary = `올해는 관성의 해입니다. 직장에서의 승진이나 사회적 지위 상승의 기회가 있습니다. 책임감이 커지는 시기이므로 성실하게 맡은 바를 다하면 좋은 결과를 얻습니다. 다만 스트레스 관리에 주의하세요.`;
+    grade = '하락';
+    gradeEmoji = '🍌';
+    priceLabel = '800원/kg';
+    summary = `올해는 관성의 해야. 윗사람이나 조직에서 오는 압박이 커지는 시기거든. 직장에서 책임이 늘어나거나, 승진 기회가 오는 대신 업무량도 폭발해. "이거 왜 다 내 몫이야?" 하면서 스트레스 받을 수 있어. 근데 이걸 잘 버티면 다음 해에 확실한 보상이 와. 건강관리 필수고, 법적인 문제나 교통법규 같은 규칙 관련 일에서 조심해야 해. 올해는 참고 버티면서 실력을 쌓는 해야.`;
   } else {
-    summary = `올해는 인성의 해입니다. 학습과 자기 개발에 좋은 시기입니다. 귀인의 도움을 받기 쉬우며, 새로운 지식이나 자격증 취득에 유리합니다. 어머니나 스승과의 인연이 강해지는 해입니다.`;
+    grade = '상승';
+    gradeEmoji = '🍌🍌';
+    priceLabel = '2,800원/kg';
+    summary = `올해는 인성의 해야. 배움의 기운이 강해지는 시기거든. 자격증 시험이나 공부를 시작하면 결과가 좋고, 직장에서도 교육이나 연수 기회가 와. 귀인의 도움을 받기 쉬운 해라 어려울 때 "갑자기 도와주는 사람"이 나타나. 어머니나 스승과의 관계가 깊어지고, 부동산이나 문서 관련 일도 잘 풀려. 다만 너무 생각만 하고 행동은 안 하는 패턴에 빠지지 않게 조심해.`;
   }
 
   return {
@@ -248,6 +269,9 @@ function calculateYearlyFortune(analysis: FullAnalysis, dayGan: CheonGan): Detai
     yearJi,
     yearOHaeng,
     summary,
+    grade,
+    gradeEmoji,
+    priceLabel,
   };
 }
 

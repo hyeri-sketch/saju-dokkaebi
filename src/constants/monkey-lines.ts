@@ -128,7 +128,7 @@ export const MONKEY_SECTION_COMMENTS = {
     ],
   },
   yearly: {
-    title: '올해 총운 바나나 시세!',
+    title: '바나나 시세',
     good: [
       '올해 바나나 시세 폭등! 좋은 해가 될 거야 우끼!',
       '올해는 바나나가 풍년! 마음껏 즐겨!',

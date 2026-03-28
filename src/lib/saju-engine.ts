@@ -103,13 +103,9 @@ function calculateWolju(yearGan: CheonGan, jeolgiMonth: number): GanJi {
 function calculateIlju(solarYear: number, solarMonth: number, solarDay: number): GanJi {
   // 줄리안 일수(Julian Day Number) 기반 계산
   const jdn = getJulianDayNumber(solarYear, solarMonth, solarDay);
-  // 2000년 1월 1일의 JDN = 2451545, 이날은 갑진일
-  // 갑진 = 60갑자 중 인덱스 40 (갑=0, 진=4 → 0*12+4는 아니고 60갑자 순서상 40번째)
-  // 실제로: 2000-01-07이 갑자일
-  // 2000-01-07 JDN = 2451551
-  // 검증된 기준일: 1949년 1월 21일 = 갑자일 (만세력 표준)
-  // JDN(1949-01-21) = 2432933
-  const baseJdn = 2432933;
+  // 기준일: 2000-01-07 = 갑자일 (만세력 표준으로 검증)
+  // JDN(2000-01-07) = 2451551
+  const baseJdn = 2451551;
   const diff = ((jdn - baseJdn) % 60 + 60) % 60;
 
   return {
