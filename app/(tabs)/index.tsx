@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,17 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Image,
+  Animated,
+  Easing,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SPACING, BORDER_RADIUS } from '../../src/constants/theme';
 import { HOME_STATUS_MESSAGES, getRandomItem } from '../../src/constants/monkey-lines';
+
+const monkeyLeft = require('../../assets/images/monkey_left.png');
+const monkeyRight = require('../../assets/images/monkey_right.png');
 
 export default function HomeScreen() {
   const statusMsg = useMemo(() => getRandomItem(HOME_STATUS_MESSAGES), []);
@@ -25,6 +31,22 @@ export default function HomeScreen() {
   const [isLunar, setIsLunar] = useState(false);
   const [gender, setGender] = useState<'남' | '여'>('남');
   const [unknownTime, setUnknownTime] = useState(false);
+
+  const [monkeyFrame, setMonkeyFrame] = useState(0);
+  const bounceAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const frameInterval = setInterval(() => {
+      setMonkeyFrame((prev) => (prev === 0 ? 1 : 0));
+    }, 400);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(bounceAnim, { toValue: -10, duration: 400, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        Animated.timing(bounceAnim, { toValue: 0, duration: 400, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+      ])
+    ).start();
+    return () => clearInterval(frameInterval);
+  }, []);
 
   const handleSubmit = () => {
     if (!year || !month || !day) {
@@ -77,10 +99,16 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* 헤더 - 야끼 원숭이 */}
+        {/* 헤더 - 포춘몽키 */}
         <View style={styles.header}>
-          <Text style={styles.logo}>🐵</Text>
-          <Text style={styles.title}>포춘야끼</Text>
+          <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
+            <Image
+              source={monkeyFrame === 0 ? monkeyLeft : monkeyRight}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
+          <Text style={styles.title}>도키도키 우끼끼 포춘몽키</Text>
           <Text style={styles.subtitle}>도파민 원숭이의 팩폭 펀치</Text>
           <View style={styles.statusBubble}>
             <Text style={styles.statusText}>{statusMsg}</Text>
@@ -264,15 +292,17 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     marginBottom: SPACING.xl,
   },
-  logo: {
-    fontSize: 64,
+  logoImage: {
+    width: 80,
+    height: 80,
     marginBottom: SPACING.sm,
   },
   title: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: '900',
     color: COLORS.text,
-    letterSpacing: 2,
+    letterSpacing: 1,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
