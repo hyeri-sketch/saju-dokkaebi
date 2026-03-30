@@ -53,6 +53,8 @@ export interface YearlyFortuneDetail {
     detail: string;
     firstHalf: string;
     secondHalf: string;
+    monthlyFortune: MonthlyFortune[];  // 월별 상세 운세
+    actionStrategy: string;            // 올해 실행 전략
     advice: string;
     luckyColor: string;
     luckyNumber: string;
@@ -100,6 +102,13 @@ export interface YearlyFortuneDetail {
     workRelation: string;
     noblePerson: string;
   };
+}
+
+export interface MonthlyFortune {
+  month: number;
+  keyword: string;
+  description: string;
+  rating: '상' | '중상' | '중' | '중하' | '하';
 }
 
 export interface JiJiInteraction {
@@ -333,6 +342,8 @@ export function calculateYearlyFortuneDetail(
       detail: totalData.detail,
       firstHalf: totalData.firstHalf,
       secondHalf: totalData.secondHalf,
+      monthlyFortune: totalData.monthlyFortune,
+      actionStrategy: totalData.actionStrategy,
       advice: totalData.advice,
       luckyColor: totalData.luckyColor,
       luckyNumber: totalData.luckyNumber,

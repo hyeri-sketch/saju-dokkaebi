@@ -32,7 +32,7 @@ import {
   isLuckyFortune,
   hasWealthStar,
 } from '../src/constants/monkey-lines';
-import type { YearlyFortuneDetail, JiJiInteraction } from '../src/lib/yearly-fortune-engine';
+import type { YearlyFortuneDetail, JiJiInteraction, MonthlyFortune } from '../src/lib/yearly-fortune-engine';
 import type { BirthInput, GanJi, OHaeng } from '../src/types/saju';
 import type { Element } from '../src/types/astrology';
 
@@ -218,6 +218,32 @@ export default function ResultScreen() {
           <View style={styles.subSection}>
             <Text style={styles.subTitle}>📆 하반기 전망</Text>
             <Text style={styles.bodyText}>{yf.totalFortune.secondHalf}</Text>
+          </View>
+          {/* 월별 운세 */}
+          <View style={styles.subSection}>
+            <Text style={styles.subTitle}>📅 월별 바나나 시세</Text>
+            <View style={styles.monthlyGrid}>
+              {yf.totalFortune.monthlyFortune.map((mf) => {
+                const ratingColor = mf.rating === '상' ? COLORS.success : mf.rating === '중상' ? '#4CAF50' : mf.rating === '중' ? COLORS.accent : mf.rating === '중하' ? COLORS.warning : COLORS.error;
+                return (
+                  <View key={mf.month} style={styles.monthlyItem}>
+                    <View style={styles.monthlyHeader}>
+                      <Text style={styles.monthlyMonth}>{mf.month}월</Text>
+                      <View style={[styles.monthlyRatingBadge, { backgroundColor: ratingColor + '20', borderColor: ratingColor }]}>
+                        <Text style={[styles.monthlyRatingText, { color: ratingColor }]}>{mf.rating}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.monthlyKeyword}>{mf.keyword}</Text>
+                    <Text style={styles.monthlyDesc}>{mf.description}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+          {/* 실행 전략 */}
+          <View style={styles.actionStrategyBox}>
+            <Text style={styles.actionStrategyTitle}>🎯 올해 실행 전략</Text>
+            <Text style={styles.actionStrategyText}>{yf.totalFortune.actionStrategy}</Text>
           </View>
           <View style={styles.adviceBox}>
             <Text style={styles.adviceTitle}>💡 올해의 조언</Text>
@@ -965,6 +991,32 @@ const styles = StyleSheet.create({
   luckyItem: { alignItems: 'center' },
   luckyLabel: { fontSize: 11, color: COLORS.textMuted, marginBottom: 4 },
   luckyValue: { fontSize: 13, fontWeight: '600', color: COLORS.text, textAlign: 'center' },
+  // 월별 운세
+  monthlyGrid: { gap: SPACING.sm },
+  monthlyItem: {
+    backgroundColor: COLORS.surfaceLight, borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.sm, borderWidth: 1, borderColor: COLORS.border,
+  },
+  monthlyHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    marginBottom: 4,
+  },
+  monthlyMonth: { fontSize: 14, fontWeight: '700', color: COLORS.text },
+  monthlyRatingBadge: {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1,
+  },
+  monthlyRatingText: { fontSize: 11, fontWeight: '700' },
+  monthlyKeyword: { fontSize: 13, fontWeight: '600', color: COLORS.primaryLight, marginBottom: 2 },
+  monthlyDesc: { fontSize: 12, color: COLORS.textSecondary, lineHeight: 18 },
+  // 실행 전략
+  actionStrategyBox: {
+    backgroundColor: COLORS.primary + '15', borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md, marginTop: SPACING.lg,
+    borderLeftWidth: 3, borderLeftColor: COLORS.primary,
+  },
+  actionStrategyTitle: { fontSize: 14, fontWeight: '700', color: COLORS.primaryLight, marginBottom: SPACING.xs },
+  actionStrategyText: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 22 },
   // 하단
   backBtn: { paddingVertical: 16, alignItems: 'center' },
   backBtnText: { color: COLORS.primaryLight, fontSize: 16, fontWeight: '600' },
